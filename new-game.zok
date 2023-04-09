@@ -1,0 +1,10 @@
+import "hashes/sha256/sha256Padded" as sha256;
+
+def main(private u8[16] encodedWord, u32[8] hash) {
+    u32[8] result = sha256(encodedWord);
+    for u32 i in 0..7 {
+        assert(result[i] == hash[i]);
+    }
+    
+    return;
+}
