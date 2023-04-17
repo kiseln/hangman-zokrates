@@ -1,0 +1,25 @@
+import "hashes/sha256/sha256Padded" as sha256;
+
+/*
+ * @notice This program proofs whether a certain symbol exists in the secret word. 
+ *   For example, for word "Hello" and symbol 'l' it will output [false, false, true, true, false..false]
+ * @param word Secret word as an array of ASCII characters. If shorter than 16 characters, ends with 0's
+ * @param hash sha-256 hash of the word
+ * @param symbol ASCII symbol to verify
+ * @returns A mask indicating whether @symbol exists in the @word and at which positions
+ */
+def main(private u8[16] word, u32[8] hash, u8 symbol) -> bool[16] {
+    u32[8] computedHash = sha256(word);
+    for u32 i in 0..7 {
+        assert(computedHash[i] == hash[i]);
+    }
+
+    bool[16] mut result = [false;16];
+    for u32 i in 0..16 {
+        bool match = word[i] == symbol;
+        result[i] = match;
+        assert(result[i] == match);
+    }
+    
+    return result;
+}
