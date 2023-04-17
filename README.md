@@ -97,3 +97,8 @@ Then it's turn for the game host to proof whether the letter exists in the word.
 `[3761131727, 136112416, 3268038706, 2457801632, 1996555359, 1620074674, 4194013285, 3301479362, 101, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]`
 
 If the proof is accepted, letters 1, 4, and 6 of the word are considered discovered and stored in `game.word`. Once all of the word's letters are discovered, the game ends.
+
+# TODO
+- Introduce seed to prevent brute-forcing
+- Front-end
+- Deploy script
