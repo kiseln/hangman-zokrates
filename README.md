@@ -102,3 +102,4 @@ If the proof is accepted, letters 1, 4, and 6 of the word are considered discove
 - Introduce seed to prevent brute-forcing
 - Front-end
 - Deploy script
+- Gas optimizations
