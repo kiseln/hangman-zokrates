@@ -8,7 +8,10 @@ The game is implemented in one Zokrates program that accepts:
 - A secret word as a *private* input (an array of ASCII characters with a size of 16)
 - A sha-256 hash of the secret word as a public input
 - A symbol(letter) that we want to check
-The output is a mask that indicates positions at which the symbol exist in the word.
+
+The output is a mask that indicates positions of the symbol within the word.
+
+`def main(private u8[16] word, u32[8] hash, u8 symbol) -> bool[16]`
 
 ## Example
 
