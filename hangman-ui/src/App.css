@@ -1,0 +1,39 @@
+.App {
+  text-align: left;
+}
+
+.App-header {
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+
+.Form-label {
+  font-size: 16px;;
+}
+
+.Form-text {
+  display: block;
+  height: 24px;
+}
+
+.Form-submit {
+  margin-top: 10px;
+  height: 24px;
+}
+
+/* .App-link {
+  color: #61dafb;
+} */
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

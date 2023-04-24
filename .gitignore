@@ -1,6 +1,6 @@
-out*
-abi*
-proving.key
-verification.key
-proof.json
-witness
+**/out*
+**/abi*
+**/proving.key
+**/verification.key
+**/proof.json
+**/witness
