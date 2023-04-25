@@ -1,9 +1,1 @@
-**/out*
-**/abi*
-**/proving.key
-**/verification.key
-**/proof.json
-**/witness
 **/node_modules
-**/cache
-**/artifacts
