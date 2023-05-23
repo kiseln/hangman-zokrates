@@ -89,13 +89,13 @@ Game is started by calling `createGame(Proof proof, uint[25] input)`
 
 To guess a letter player calls `guessLetter(uint gameId, uint8 letter)`. For example: 
 
-`12180669030456798691483404173535495703392310150306364875580628243936442299105, 101)`
+`(12180669030456798691483404173535495703392310150306364875580628243936442299105, 101)`
 
 This registers symbol `101` as the latest guess.
 
 ### Verifying player's guesses
 
-Then it's turn for the game host to proof whether the letter exists in the word. Host again provides a proof and an input. This time Element 8 will be the latest guess, which is `101`:
+Then it's turn for the game host to prove whether the letter exists in the word. Host again provides a proof and an input. This time Element 8 will be the latest guess, which is `101`:
 
 `[3761131727, 136112416, 3268038706, 2457801632, 1996555359, 1620074674, 4194013285, 3301479362, 101, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]`
 
