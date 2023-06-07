@@ -1,9 +1,7 @@
-import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom"
-import { generateCreateGameProof } from '../proof-generation';
-import hangmanContract from '../abi/hangman';
-import config from '../config';
+import prover from '../proof-generation';
+import gameWriter from '../blockchain/game-writer';
 
 
 function NewGame() {
@@ -20,7 +18,7 @@ function NewGame() {
 
     if (word.length < 3 || word.length > 16) return;
     
-    const proof = await generateCreateGameProof(word, async (status) => { 
+    const proof = await prover.generateCreateGameProof(word, async (status) => { 
       setStatus(status);
       setLoading(true);
       // Otherwise the thread is blocked by proof computations and status never updates
@@ -36,22 +34,11 @@ function NewGame() {
   async function handleSubmitProofToCreateGame(e) {    
     e.preventDefault();
     
-    setLoading(true);
-    
-    const signer = await connectWallet();
-    const contract = new ethers.Contract(config.contractAddress, hangmanContract.abi, signer);    
-    const tx = await contract.createGame(createGameProof.proof, createGameProof.inputs);
-    const receipt = await tx.wait();
-    const gameId = receipt.logs[0].topics[0];
-    
+    setLoading(true);    
+    const gameId = await gameWriter.createGame(createGameProof);    
     setLoading(false);
 
     navigate(`game/${gameId}`);
-  }
-
-  async function connectWallet() {
-    const provider = new ethers.BrowserProvider(window.ethereum)
-    return await provider.getSigner();
   }
 
   return (

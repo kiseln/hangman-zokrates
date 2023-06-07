@@ -2,7 +2,7 @@ import './App.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NewGame from './NewGame';
 import ExistingGame from './ExistingGame';
-import gameLoader from '../game/game-loader';
+import gameLoader from '../data/game-loader';
   
 const router = createBrowserRouter([
   {

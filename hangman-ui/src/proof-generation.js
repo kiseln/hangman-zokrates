@@ -1,7 +1,7 @@
 import { initialize } from "zokrates-js";
 import sha256 from 'crypto-js/sha256';
 
-export async function generateCreateGameProof(word, updateStatus) {
+async function generateCreateGameProof(word, updateStatus) {
     await updateStatus("Initializing zokrates...");
     const zokratesProvider = await initialize();
 
@@ -72,3 +72,5 @@ async function getProovingKey() {
 
     return [...new Uint8Array(buffer)];
 }
+
+export default { generateCreateGameProof };
