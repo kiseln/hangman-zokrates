@@ -1,13 +1,16 @@
-import './App.css';
-import { generateCreateGameProof } from './proof-generation';
 import { ethers } from 'ethers';
-import hangmanContract from './abi/hangman';
-import config from './config';
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom"
+import { generateCreateGameProof } from '../proof-generation';
+import hangmanContract from '../abi/hangman';
+import config from '../config';
 
-function App() {
+
+function NewGame() {
   const [createGameProof, setCreateGameProof] = useState();
   const [status, setStatus] = useState();
+  const [loading, setLoading] = useState();
+  const navigate = useNavigate();
 
   async function handleGenerateProof(e) {
     e.preventDefault();
@@ -19,22 +22,31 @@ function App() {
     
     const proof = await generateCreateGameProof(word, async (status) => { 
       setStatus(status);
+      setLoading(true);
       // Otherwise the thread is blocked by proof computations and status never updates
       await new Promise(resolve => {
         setTimeout(resolve, 100);
       }) 
     });
     
+    setLoading(false);
     setCreateGameProof(proof);
   }
 
   async function handleSubmitProofToCreateGame(e) {    
     e.preventDefault();
     
+    setLoading(true);
+    
     const signer = await connectWallet();
     const contract = new ethers.Contract(config.contractAddress, hangmanContract.abi, signer);    
     const tx = await contract.createGame(createGameProof.proof, createGameProof.inputs);
-    await tx.wait();
+    const receipt = await tx.wait();
+    const gameId = receipt.logs[0].topics[0];
+    
+    setLoading(false);
+
+    navigate(`game/${gameId}`);
   }
 
   async function connectWallet() {
@@ -43,28 +55,25 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h2>
-          Play "Hangman" powered by Zero Knowledge Proofs
-        </h2>
-        {!createGameProof ?
-        (<form name="generate-proof" onSubmit={handleGenerateProof}>
+    <div>
+      <div className={`Fade ${loading ? "Fade-display" : ""}`}></div>
+
+      {!createGameProof ?
+      (<form className="Form" name="generate-proof" onSubmit={handleGenerateProof}>
           <label className="Form-label">
-            Pick a word:
-            <input className="Form-text" name="word" type="text" />
+          Pick a word:
+          <input className="Form-text" name="word" type="text" />
           </label>
           <button className="Form-submit" type="submit">Generate proof</button>
-        </form>) :
+      </form>) :
 
-        (<form name="submit-proof" onSubmit={handleSubmitProofToCreateGame}>
+      (<form name="submit-proof" onSubmit={handleSubmitProofToCreateGame}>
           <button className="Form-submit" type="submit">Create game</button>
-        </form>)
-        }
-        {status}
-      </header>
+      </form>)
+      }
+      {status}
     </div>
   );
 }
 
-export default App;
+export default NewGame;

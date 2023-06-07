@@ -11,6 +11,23 @@
   font-size: calc(10px + 2vmin);
 }
 
+.App-container {
+  position: relative;
+}
+
+.Fade {
+  background-color: gray;
+  display: none;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  opacity: 0.2;
+}
+
+.Fade.Fade-display {
+  display: block;
+}
+
 .Form-label {
   font-size: 16px;;
 }
