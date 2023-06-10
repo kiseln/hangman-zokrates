@@ -1,3 +1,25 @@
+.game {
+    text-align: center;
+}
+
 .word-letter {
+    padding: 0 10px;
+}
+
+.pick-letter {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.alphabet-letter {
     padding: 0 3px;
+    cursor: pointer;
+}
+
+.alphabet-letter.alphabet-letter-selected {
+    font-weight: bold;
+}
+
+.alphabet-letter:hover {
+    color: gray;
 }

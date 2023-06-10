@@ -4,14 +4,24 @@ import config from '../config';
 
 async function createGame(createGameProof) {
     const signer = await connectWallet();
-    const contract = new ethers.Contract(config.contractAddress, hangmanContract.abi, signer);    
     
-    const tx = await contract.createGame(createGameProof.proof, createGameProof.inputs);
+    const tx = await getContract(signer).createGame(createGameProof.proof, createGameProof.inputs);
     const receipt = await tx.wait();
     
-    const gameId = receipt.logs[0].topics[0];
+    const gameId = receipt.logs[0].topics[1];
 
     return gameId;
+}
+
+async function suggestLetter(gameId, letter) {
+    const signer = await connectWallet();
+
+    const tx = await getContract(signer).guessLetter(gameId, letter);
+    await tx.wait();
+}
+
+function getContract(signer) {
+    return new ethers.Contract(config.contractAddress, hangmanContract.abi, signer);
 }
 
 async function connectWallet() {
@@ -19,4 +29,4 @@ async function connectWallet() {
     return await provider.getSigner();
 }
 
-export default { createGame };
+export default { createGame, suggestLetter };
