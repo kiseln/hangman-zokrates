@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NewGame from './NewGame';
 import ExistingGame from './ExistingGame';
 import gameLoader from '../data/game-loader';
+import config from '../config';
   
 const router = createBrowserRouter([
   {
@@ -15,6 +16,11 @@ const router = createBrowserRouter([
     element: <ExistingGame />
   }
 ]);
+
+window.ethereum.request({
+  method: "wallet_addEthereumChain",
+  params: [config.chain]
+});
 
 function App() {
   return (

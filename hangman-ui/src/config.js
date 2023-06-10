@@ -1,4 +1,15 @@
 export default
 {
-    "contractAddress": "0x59D043026664782D1c716a7DC79E39D414C0219c"
+    contractAddress: "",
+    chain: {
+        chainId: "0x5",
+        rpcUrls: ["https://ethereum-goerli.publicnode.com"],
+        chainName: "Ethereum Goerli",
+        nativeCurrency: {
+            name: "ETH",
+            symbol: "ETH",
+            decimals: 18
+        },
+        blockExplorerUrls: ["https://goerli.etherscan.io"]
+    }
 }
