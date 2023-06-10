@@ -6,7 +6,7 @@ import './Verifier.sol';
 contract Hangman is Verifier {
     
     /// @notice Mapping of game instances
-    mapping(uint => Game) private games;
+    mapping(uint => Game) public games;
     
     /// @notice Information about the game including secret word, which turn it is, and previous user actions
     struct Game {
@@ -20,6 +20,30 @@ contract Hangman is Verifier {
         uint8[] attempts;
         /// @notice The resulting word as an array of ASCII characters. When first {length} characters of this array are set, the game ends
         uint8[16] word;
+    }
+
+    modifier _guesserTurn(uint gameId) {
+        if (!games[gameId].guesserTurn) revert NotGuesserTurn();
+        _;
+    }
+
+    modifier _verifierTurn(uint gameId) {
+        if (games[gameId].guesserTurn) revert NotTurnToVerify();
+        _;
+    }
+
+    modifier _letterNotUsed(uint gameId, uint8 letter) {
+        Game memory game = games[gameId];
+        for (uint i = 0; i < game.attempts.length; i++) {
+            if (game.attempts[i] == letter) revert LetterWasUsed(letter);
+        }
+        _;
+    }
+
+    modifier _gameActive(uint gameId) {
+        if (!isGameActive(gameId)) revert GameNotActive(gameId);
+
+        _;
     }
 
     /**
@@ -134,28 +158,12 @@ contract Hangman is Verifier {
         return gameActive;
     }
 
-    modifier _guesserTurn(uint gameId) {
-        if (!games[gameId].guesserTurn) revert NotGuesserTurn();
-        _;
+    function gameAttempts(uint gameId) public view returns (uint8[] memory) {
+        return games[gameId].attempts;
     }
 
-    modifier _verifierTurn(uint gameId) {
-        if (games[gameId].guesserTurn) revert NotTurnToVerify();
-        _;
-    }
-
-    modifier _letterNotUsed(uint gameId, uint8 letter) {
-        Game memory game = games[gameId];
-        for (uint i = 0; i < game.attempts.length; i++) {
-            if (game.attempts[i] == letter) revert LetterWasUsed(letter);
-        }
-        _;
-    }
-
-    modifier _gameActive(uint gameId) {
-        if (!isGameActive(gameId)) revert GameNotActive(gameId);
-
-        _;
+    function gameWord(uint gameId) public view returns (uint8[16] memory) {
+        return games[gameId].word;
     }
 
     event GameCreated(uint indexed gameId, uint8 wordLength);

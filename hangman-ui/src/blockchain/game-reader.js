@@ -5,12 +5,18 @@ import config from '../config';
 async function read(id) {
     const provider = getProvider();
     const contract = new ethers.Contract(config.contractAddress, hangmanContract.abi, provider);
+
+    const game = await contract.games(id);
+    const attempts = await contract.gameAttempts(id);
+    const word = await contract.gameWord(id);
     
-    let events = await contract.queryFilter(
-        contract.filters.GameCreated(id)
-    );
-    
-    return { id, length: parseInt(events[0].data) };
+    return { 
+        id,
+        length: Number(game.getValue("length")),
+        guesserTurn: game.getValue("guesserTurn"),
+        attempts,
+        word
+    };
 }
 
 function getProvider() {
