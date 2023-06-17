@@ -14,8 +14,8 @@ async function read(id) {
         id,
         length: Number(game.getValue("length")),
         guesserTurn: game.getValue("guesserTurn"),
-        attempts,
-        word
+        attempts: attempts.map(a => Number(a)),
+        word: word.map(l => Number(l))
     };
 }
 

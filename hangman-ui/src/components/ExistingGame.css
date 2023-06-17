@@ -20,6 +20,12 @@
     font-weight: bold;
 }
 
+.alphabet-letter.alphabet-letter-attempted,
+.alphabet-letter.alphabet-letter-attempted:hover {
+    color: rgb(255, 221, 25);
+    cursor: default;
+}
+
 .alphabet-letter:hover {
     color: gray;
 }
