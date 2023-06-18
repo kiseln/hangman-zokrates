@@ -31,7 +31,7 @@ function NewGame() {
     setCreateGameProof(proof);
   }
 
-  async function handleSubmitProofToCreateGame(e) {    
+  async function handleSubmitProofToCreateGame(e) {
     e.preventDefault();
     
     setLoading(true);    
@@ -55,7 +55,7 @@ function NewGame() {
       </form>) :
 
       (<form name="submit-proof" onSubmit={handleSubmitProofToCreateGame}>
-          <button className="Form-submit" type="submit">Create game</button>
+          <button className="Form-submit" type="submit">Create game (submit proof to the blockchain)</button>
       </form>)
       }
       {status}

@@ -37,7 +37,7 @@ async function generateProof(word, symbol, updateStatus) {
     const artifacts = zokratesProvider.compile(code);
 
     await updateStatus("Computing witness...");
-    const { witness, _ } = zokratesProvider.computeWitness(artifacts, generateGameInput(word, symbol));
+    const { witness } = zokratesProvider.computeWitness(artifacts, generateGameInput(word, symbol));
 
     await updateStatus("Generating proof...");
     const proovingKey = await getProovingKey();
@@ -52,12 +52,12 @@ function generateGameInput(word, symbol) {
     const input = [[]];
 
     // First input is a padded word
-    for (var i = 0; i < 16; i++) {
+    for (let i = 0; i < 16; i++) {
         input[0].push(word[i] === undefined ? "0" : word[i].charCodeAt(0).toString());
     }
 
     // Second input is a hashed word
-    let hashedWord = utils.paddedHash(word);
+    const hashedWord = utils.paddedHash(word);
     input.push(hashedWord);
 
     // Third input is a character we are verifying (0 for new game)

@@ -17,10 +17,12 @@ const router = createBrowserRouter([
   }
 ]);
 
-window.ethereum.request({
-  method: "wallet_addEthereumChain",
-  params: [config.chain]
-});
+if (window.ethereum.chainId !== config.chain.chainId) {
+  window.ethereum.request({
+    method: "wallet_addEthereumChain",
+    params: [config.chain]
+  });
+}
 
 function App() {
   return (
