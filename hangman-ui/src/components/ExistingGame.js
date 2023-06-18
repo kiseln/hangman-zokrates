@@ -29,12 +29,12 @@ function ExistingGame() {
   } else if (!game.isGuesserTurn) {
     form = <h5>Wait for the latest guess to be verified</h5>
   } else {
-    form = <LetterSelect attempts={game.attempts} onSubmit={handleSubmit} />;
+    form = <LetterSelect attempts={game.attempts} word={game.word} isGuesserTurn={game.isGuesserTurn} onSubmit={handleSubmit} />;
   }
 
   return (
     <div className="game">
-      <WordToGuess length={game.length} />
+      <WordToGuess length={game.length} word={game.word} />
       {form}
     </div>
   );

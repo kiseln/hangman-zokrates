@@ -10,22 +10,3 @@
     text-align: left;
     margin-bottom: 10px;
 }
-
-.alphabet-letter {
-    padding: 0 3px;
-    cursor: pointer;
-}
-
-.alphabet-letter.alphabet-letter-selected {
-    font-weight: bold;
-}
-
-.alphabet-letter.alphabet-letter-attempted,
-.alphabet-letter.alphabet-letter-attempted:hover {
-    color: rgb(255, 221, 25);
-    cursor: default;
-}
-
-.alphabet-letter:hover {
-    color: gray;
-}

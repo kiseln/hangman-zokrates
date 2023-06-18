@@ -1,0 +1,30 @@
+.alphabet-letter {
+  padding: 0 3px;
+  cursor: pointer;
+}
+
+.alphabet-letter.alphabet-letter-selected {
+  font-weight: bold;
+}
+
+.alphabet-letter:hover {
+  color: gray;
+}
+
+.alphabet-letter.alphabet-letter-pending,
+.alphabet-letter.alphabet-letter-pending:hover {
+  color: rgb(255, 221, 25);
+  cursor: default;
+}
+
+.alphabet-letter.alphabet-letter-correct,
+.alphabet-letter.alphabet-letter-correct:hover {
+  color: #25b325;
+  cursor: default;
+}
+
+.alphabet-letter.alphabet-letter-incorrect,
+.alphabet-letter.alphabet-letter-incorrect:hover {
+  color: red;
+  cursor: default;
+}
