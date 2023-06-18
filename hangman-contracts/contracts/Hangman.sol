@@ -10,17 +10,36 @@ contract Hangman is Verifier {
     
     /// @notice Information about the game including secret word, which turn it is, and previous user actions
     struct Game {
-        /// @notice sha-256 encrypted secret word that game host picked
-        uint32[8] secretWordHash;
         /// @notice Length of a word that game host picked (max: 16)
         uint8 length;
         /// @notice Indicates whether it is a turn to guess a letter or post a proof whether the previous guess is correct
         bool guesserTurn;
+        /// @notice Address that created the game
+        address host;
+        /// @notice sha-256 encrypted secret word that game host picked
+        uint32[8] secretWordHash;
         /// @notice A list of attempts to guess letters that are in the word. Represented as codes of ASCII characters
         uint8[] attempts;
         /// @notice The resulting word as an array of ASCII characters. When first {length} characters of this array are set, the game ends
         uint8[16] word;
     }
+
+    event GameCreated(uint indexed gameId, uint8 wordLength, address indexed host);
+    event GameEnded(uint indexed gameId, uint8[16] word);
+
+    error GameAlreadyExsits(uint gameId);
+    error GameNotActive(uint gameId);
+    error NotAStartGameInput(uint[25] input);
+    error InvalidProof();
+    error InvalidWordInput(uint[25] input);
+    error InvalidWordLength(uint8 wordLength);
+    error NotGuesserTurn();
+    error NotTurnToVerify();
+    error LetterWasUsed(uint8 letter);
+    error InvalidGuess(uint8 letter);
+    error NotLatestGuess(uint8 latestGuess, uint8 verificationForGuess);
+    error InvalidWordHash(uint[25] input);
+    error OnlyHost(address host, address attempted);
 
     modifier _guesserTurn(uint gameId) {
         if (!games[gameId].guesserTurn) revert NotGuesserTurn();
@@ -42,7 +61,6 @@ contract Hangman is Verifier {
 
     modifier _gameActive(uint gameId) {
         if (!isGameActive(gameId)) revert GameNotActive(gameId);
-
         _;
     }
 
@@ -84,8 +102,9 @@ contract Hangman is Verifier {
         }
         games[gameId].length = wordLength;
         games[gameId].guesserTurn = true;
+        games[gameId].host = msg.sender;
 
-        emit GameCreated(gameId, wordLength);
+        emit GameCreated(gameId, wordLength, msg.sender);
     }
 
     /**
@@ -126,8 +145,8 @@ contract Hangman is Verifier {
 
         // Store letter positions in the result if guessed correctly
         uint gameLength = game.length;
-        for (uint i = 9; i < gameLength; i++) {
-            if (input[i] == 1) { 
+        for (uint i = 9; i < 9 + gameLength; i++) {
+            if (input[i] == 1) {
                 game.word[i - 9] = uint8(input[8]);
             }
         }
@@ -146,7 +165,7 @@ contract Hangman is Verifier {
     }
 
     function isGameActive(uint gameId) internal view returns (bool) {
-        Game memory game = games[gameId];        
+        Game memory game = games[gameId];
         bool gameActive;
         for (uint i = 0; i < game.length; i++) {
             if (game.word[i] == 0) {
@@ -166,19 +185,7 @@ contract Hangman is Verifier {
         return games[gameId].word;
     }
 
-    event GameCreated(uint indexed gameId, uint8 wordLength);
-    event GameEnded(uint indexed gameId, uint8[16] word);
-
-    error GameAlreadyExsits(uint gameId);
-    error GameNotActive(uint gameId);
-    error NotAStartGameInput(uint[25] input);
-    error InvalidProof();
-    error InvalidWordInput(uint[25] input);
-    error InvalidWordLength(uint8 wordLength);
-    error NotGuesserTurn();
-    error NotTurnToVerify();
-    error LetterWasUsed(uint8 letter);
-    error InvalidGuess(uint8 letter);
-    error NotLatestGuess(uint8 latestGuess, uint8 verificationForGuess);
-    error InvalidWordHash(uint[25] input);
+    function secretWordHash(uint gameId) public view returns (uint32[8] memory) {
+        return games[gameId].secretWordHash;
+    }
 }

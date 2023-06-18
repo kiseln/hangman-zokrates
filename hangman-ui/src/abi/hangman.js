@@ -121,6 +121,22 @@ export default
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "host",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "attempted",
+          "type": "address"
+        }
+      ],
+      "name": "OnlyHost",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {
@@ -134,6 +150,12 @@ export default
           "internalType": "uint8",
           "name": "wordLength",
           "type": "uint8"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "host",
+          "type": "address"
         }
       ],
       "name": "GameCreated",
@@ -286,6 +308,11 @@ export default
           "internalType": "bool",
           "name": "guesserTurn",
           "type": "bool"
+        },
+        {
+          "internalType": "address",
+          "name": "host",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -307,6 +334,25 @@ export default
       "name": "guessLetter",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "secretWordHash",
+      "outputs": [
+        {
+          "internalType": "uint32[8]",
+          "name": "",
+          "type": "uint32[8]"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
