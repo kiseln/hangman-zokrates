@@ -28,3 +28,11 @@
   color: red;
   cursor: default;
 }
+
+.block-ui-container {
+  cursor: default;
+}
+
+.loading-indicator {
+  display: none;
+}

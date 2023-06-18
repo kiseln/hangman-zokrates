@@ -1,6 +1,7 @@
 import './LetterSelect.css';
 import { useState } from 'react';
 import classNames from "classnames";
+import BlockUi from '@availity/block-ui';
 
 export default function LetterSelect({ attempts, word, isGuesserTurn, onSubmit }) {
   const [selectedLetter, updateSelectedLetter] = useState(0);
@@ -18,7 +19,7 @@ export default function LetterSelect({ attempts, word, isGuesserTurn, onSubmit }
   }
 
   function letterIncorrect(letter) {
-    return letterAttempted(letter) && !letterCorrect(letter) && isGuesserTurn;
+    return letterAttempted(letter) && !letterCorrect(letter) && !letterPending(letter);
   }
 
   function handleSelect(e) {
@@ -31,14 +32,14 @@ export default function LetterSelect({ attempts, word, isGuesserTurn, onSubmit }
       updateSelectedLetter(selected);
   }
 
-  function handleSubmit() {
-    onSubmit(selectedLetter);
+  async function handleSubmit() {
+    await onSubmit(selectedLetter);
   }
 
   const charOffset = 97;
 
   return (
-    <div>
+    <BlockUi blocking={!isGuesserTurn}>
       <h5 className="pick-letter">Pick a letter:</h5>
       <div className="alphabet">
         {[...Array(26)].map((_, i) =>
@@ -54,6 +55,6 @@ export default function LetterSelect({ attempts, word, isGuesserTurn, onSubmit }
         )}
       </div>
       {selectedLetter ? <button onClick={handleSubmit}>Submit</button> : <div></div>}
-    </div>
+    </BlockUi>
   );
 }
