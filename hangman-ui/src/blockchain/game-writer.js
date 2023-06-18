@@ -20,6 +20,13 @@ async function suggestLetter(gameId, letter) {
     await tx.wait();
 }
 
+async function verifyLetter(verifyLetterProof, gameId) {
+    const signer = await connectWallet();
+
+    const tx = await getContract(signer).verifyLetter(verifyLetterProof.proof, verifyLetterProof.inputs, gameId);
+    await tx.wait();
+}
+
 function getContract(signer) {
     return new ethers.Contract(config.contractAddress, hangmanContract.abi, signer);
 }
@@ -29,4 +36,4 @@ async function connectWallet() {
     return await provider.getSigner();
 }
 
-export default { createGame, suggestLetter };
+export default { createGame, suggestLetter, verifyLetter };

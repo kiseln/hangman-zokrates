@@ -1,7 +1,15 @@
 import { initialize } from "zokrates-js";
-import sha256 from 'crypto-js/sha256';
+import utils from './utils';
 
-async function generateCreateGameProof(word, updateStatus) {
+function generateCreateGameProof(word, updateStatus) {
+    return generateProof(word, "0", updateStatus);
+}
+
+function generateLetterProof(word, letter, updateStatus) {
+    return generateProof(word, letter, updateStatus);
+}
+
+async function generateProof(word, symbol, updateStatus) {
     await updateStatus("Initializing zokrates...");
     const zokratesProvider = await initialize();
 
@@ -29,7 +37,7 @@ async function generateCreateGameProof(word, updateStatus) {
     const artifacts = zokratesProvider.compile(code);
 
     await updateStatus("Computing witness...");
-    const { witness, _ } = zokratesProvider.computeWitness(artifacts, generateCreateGameInput(word));
+    const { witness, _ } = zokratesProvider.computeWitness(artifacts, generateGameInput(word, symbol));
 
     await updateStatus("Generating proof...");
     const proovingKey = await getProovingKey();
@@ -40,37 +48,29 @@ async function generateCreateGameProof(word, updateStatus) {
     return proof;
 }
 
-function generateCreateGameInput(word) {
-    const input = [[], []];
+function generateGameInput(word, symbol) {
+    const input = [[]];
 
     // First input is a padded word
     for (var i = 0; i < 16; i++) {
         input[0].push(word[i] === undefined ? "0" : word[i].charCodeAt(0).toString());
     }
 
-    let paddedWord = word;
-    for (var i = 0; i < 16 - word.length; i++) {
-        paddedWord += String.fromCharCode(0);
-    }
-
     // Second input is a hashed word
-    const sha256Array = sha256(paddedWord);
-    for (var i = 0; i < 8; i++) {
-        const unsignedSha256Word = sha256Array.words[i] >>> 0;
-        input[1].push(unsignedSha256Word.toString());
-    }
+    let hashedWord = utils.paddedHash(word);
+    input.push(hashedWord);
 
     // Third input is a character we are verifying (0 for new game)
-    input.push("0");
+    input.push(symbol);
     return input;
 }
 
 async function getProovingKey() {
-    const response = await fetch('./proving.key')
+    const response = await fetch('/proving.key')
     const blob = await response.blob();
     const buffer = await blob.arrayBuffer();
 
     return [...new Uint8Array(buffer)];
 }
 
-export default { generateCreateGameProof };
+export default { generateCreateGameProof, generateLetterProof };

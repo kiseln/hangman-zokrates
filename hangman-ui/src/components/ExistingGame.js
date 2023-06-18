@@ -1,54 +1,41 @@
 import './ExistingGame.css';
 import { useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
-import classNames from "classnames";
 import gameWriter from '../blockchain/game-writer';
+import WordToGuess from './WordToGuess';
+import LetterSelect from './LetterSelect';
+import VerifyGuess from './VerifyGuess';
 
 function ExistingGame() {
-  const game = useLoaderData();
-  const [selectedLetter, updateSelectedLetter] = useState(0);
+  const loadedGame = useLoaderData();
+  const [ game, updateGame ] = useState(loadedGame);
 
-  function letterAttempted(letter) {
-    return game.attempts.includes(letter);
-  }
-
-  function handleSelect(e) {
-    const selected = e.target.attributes['code'].value;
-    if (selected === selectedLetter)
-      updateSelectedLetter(0);
-    else
-      updateSelectedLetter(selected);
-  }
-
-  async function handleSubmit() {
+  async function handleSubmit(selectedLetter) {
     await gameWriter.suggestLetter(game.id, selectedLetter);
+    game.attempts.push(selectedLetter);
+    game.isGuesserTurn = false;
+    updateGame(game);
   }
 
   if (game.length === 0) {
     return (<div className="game">Game doesn't exist</div>)
   }
 
+  let form;
+  if (game.isHost && !game.isGuesserTurn) {
+    form = <VerifyGuess gameId={game.id} latestGuess={game.attempts.slice(-1)} secretWordHash={game.secretWordHash} />;
+  } else if (game.isHost) {
+    form = <h5>Now it's guesser's turn</h5>
+  } else if (!game.isGuesserTurn) {
+    form = <h5>Wait for the latest guess to be verified</h5>
+  } else {
+    form = <LetterSelect attempts={game.attempts} onSubmit={handleSubmit} />;
+  }
+
   return (
     <div className="game">
-      <h3>Guess the word below</h3>
-      <div className="word">
-        {[...Array(game.length)].map((_, i) =>
-          <span className="word-letter" key={i}>_</span>
-        )}
-      </div>
-      <h5 className="pick-letter">Pick a letter:</h5>
-      <div className="alphabet">
-        {[...Array(26)].map((_, i) =>
-          <span onClick={handleSelect} key={97+i} code={97+i} className={classNames({
-            "alphabet-letter": true,
-            "alphabet-letter-selected": selectedLetter == 97+i,
-            "alphabet-letter-attempted": letterAttempted(97+i)
-          })}>            
-            {String.fromCharCode(97+i)}
-          </span>
-        )}
-      </div>
-      {selectedLetter ? <button onClick={handleSubmit}>Submit</button> : <div></div>}
+      <WordToGuess length={game.length} />
+      {form}
     </div>
   );
 }
