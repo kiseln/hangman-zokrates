@@ -1,12 +1,15 @@
+import './VerifyGuess.css';
 import { useState } from 'react';
+import BlockUi from '@availity/block-ui';
 import prover from '../proof-generation';
 import gameWriter from '../blockchain/game-writer';
 import utils from '../utils';
 
 export default function VerifyGuess({ gameId, latestGuess, secretWordHash }) {
   const [proof, setProof] = useState();
-  const [status, setStatus] = useState();
+  const [loadingStatus, setStatus] = useState();
   const [loading, setLoading] = useState();
+  const [error, setError] = useState();
 
   async function handleGenerateProof(e) {
     e.preventDefault();
@@ -18,7 +21,7 @@ export default function VerifyGuess({ gameId, latestGuess, secretWordHash }) {
     const hash = utils.paddedHash(word);
     for (var i = 0; i < 8; i++) {
       if (Number(hash[i]) !== secretWordHash[i]) {
-        setStatus("Secret word is not correct, hashes don't match!");
+        setError("Secret word is not correct, hashes don't match!");
         return;
       }
     }
@@ -39,15 +42,16 @@ export default function VerifyGuess({ gameId, latestGuess, secretWordHash }) {
   async function handleSubmitProof(e) {
     e.preventDefault();
     
-    setLoading(true);    
-    await gameWriter.verifyLetter(proof, gameId);    
+    setLoading(true);
+    setStatus("Submitting transaction");
+    await gameWriter.verifyLetter(proof, gameId);
     setLoading(false);
+    setStatus("");
   }
 
   return(
-    <div>
-      <div className={`Fade ${loading ? "Fade-display" : ""}`}></div>
-      <h5>The current guess is <span style={{color:"orange"}}>{String.fromCharCode(latestGuess)}</span></h5>
+    <BlockUi className="verify-guess" blocking={loading} message={loadingStatus}>
+      <h5>The current guess is <span>{String.fromCharCode(latestGuess)}</span></h5>
 
       {!proof ?
       (<form className="Form" name="generate-proof" onSubmit={handleGenerateProof}>
@@ -62,7 +66,7 @@ export default function VerifyGuess({ gameId, latestGuess, secretWordHash }) {
           <button className="Form-submit" type="submit">Submit proof</button>
       </form>)
       }
-      {status}
-    </div>
+      <span className="verify-guess-error">{error}</span>      
+    </BlockUi>
   );
 }

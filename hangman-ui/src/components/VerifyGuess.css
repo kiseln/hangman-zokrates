@@ -1,0 +1,16 @@
+.verify-guess {
+  text-align: left;
+}
+
+.verify-guess h5 {
+  margin-bottom: 10px;
+}
+
+.verify-guess h5 span {
+  color: rgb(255, 221, 25);
+}
+
+.verify-guess-error {
+  color: red;
+  font-size: 2vmin;
+}

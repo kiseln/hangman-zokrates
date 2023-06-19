@@ -21,20 +21,15 @@ function ExistingGame() {
     return (<div className="game">Game doesn't exist</div>)
   }
 
-  let form;
-  if (game.isHost && !game.isGuesserTurn) {
-    form = <VerifyGuess gameId={game.id} latestGuess={game.attempts.slice(-1)} secretWordHash={game.secretWordHash} />;
-  } else if (game.isHost) {
-    form = <h5>Now it's guesser's turn</h5>
-  } else if (!game.isGuesserTurn) {
-    form = <h5>Wait for the latest guess to be verified</h5>
-  }
-
   return (
     <div className="game">
       <WordToGuess length={game.length} word={game.word} />
+      <h5>{game.isGuesserTurn ? "It is a player's turn to select a letter" : "It is a turn for the host to verify latest guess"}</h5>
       <LetterSelect attempts={game.attempts} word={game.word} isGuesserTurn={game.isGuesserTurn} onSubmit={handleSubmit} />
-      {form}
+      {game.isHost && !game.isGuesserTurn 
+        ? <VerifyGuess gameId={game.id} latestGuess={game.attempts.slice(-1)} secretWordHash={game.secretWordHash} />
+        : <span></span>
+      }
     </div>
   );
 }
