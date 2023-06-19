@@ -2,20 +2,22 @@ import './LetterSelect.css';
 import { useState } from 'react';
 import classNames from "classnames";
 import BlockUi from '@availity/block-ui';
+import gameWriter from '../blockchain/game-writer';
 
-export default function LetterSelect({ attempts, word, isGuesserTurn, onSubmit }) {
+export default function LetterSelect({ game, onSubmit }) {
   const [selectedLetter, updateSelectedLetter] = useState(0);
+  const [[ loading, loadingMessage ], updateLoading] = useState([false, ""]);
 
   function letterAttempted(letter) {
-    return attempts.includes(letter);
+    return game.attempts.includes(letter);
   }
 
   function letterPending(letter) {
-    return attempts[attempts.length - 1] === letter && !isGuesserTurn;
+    return game.attempts[game.attempts.length - 1] === letter && !game.isGuesserTurn;
   }
 
   function letterCorrect(letter) {
-    return word.includes(letter);
+    return game.word.includes(letter);
   }
 
   function letterIncorrect(letter) {
@@ -33,13 +35,16 @@ export default function LetterSelect({ attempts, word, isGuesserTurn, onSubmit }
   }
 
   async function handleSubmit() {
-    await onSubmit(selectedLetter);
+    updateLoading([true, "Submitting transaction"]);
+    await gameWriter.suggestLetter(game.id, selectedLetter);
+    updateLoading([false, ""]);
+    onSubmit();
   }
 
   const charOffset = 97;
 
   return (
-    <BlockUi blocking={!isGuesserTurn}>
+    <BlockUi blocking={!game.isGuesserTurn || loading} message={loadingMessage}>
       <h5 className="pick-letter">Pick a letter:</h5>
       <div className="alphabet">
         {[...Array(26)].map((_, i) =>

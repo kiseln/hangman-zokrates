@@ -5,11 +5,12 @@ import prover from '../proof-generation';
 import gameWriter from '../blockchain/game-writer';
 import utils from '../utils';
 
-export default function VerifyGuess({ gameId, latestGuess, secretWordHash }) {
+export default function VerifyGuess({ game, onProofSubmitted }) {
   const [proof, setProof] = useState();
   const [loadingStatus, setStatus] = useState();
   const [loading, setLoading] = useState();
   const [error, setError] = useState();
+  const latestGuess = game.attempts.slice(-1);
 
   async function handleGenerateProof(e) {
     e.preventDefault();
@@ -20,7 +21,7 @@ export default function VerifyGuess({ gameId, latestGuess, secretWordHash }) {
     
     const hash = utils.paddedHash(word);
     for (var i = 0; i < 8; i++) {
-      if (Number(hash[i]) !== secretWordHash[i]) {
+      if (Number(hash[i]) !== game.secretWordHash[i]) {
         setError("Secret word is not correct, hashes don't match!");
         return;
       }
@@ -44,9 +45,11 @@ export default function VerifyGuess({ gameId, latestGuess, secretWordHash }) {
     
     setLoading(true);
     setStatus("Submitting transaction");
-    await gameWriter.verifyLetter(proof, gameId);
+    await gameWriter.verifyLetter(proof, game.id);
     setLoading(false);
     setStatus("");
+
+    onProofSubmitted();
   }
 
   return(
