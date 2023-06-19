@@ -7,6 +7,9 @@ import gameWriter from '../blockchain/game-writer';
 export default function LetterSelect({ game, onSubmit }) {
   const [selectedLetter, updateSelectedLetter] = useState(0);
   const [[ loading, loadingMessage ], updateLoading] = useState([false, ""]);
+  const gameFinished = game.word
+    .slice(0, game.length)
+    .every(v => v !== 0);
 
   function letterAttempted(letter) {
     return game.attempts.includes(letter);
@@ -44,7 +47,7 @@ export default function LetterSelect({ game, onSubmit }) {
   const charOffset = 97;
 
   return (
-    <BlockUi blocking={!game.isGuesserTurn || loading} message={loadingMessage}>
+    <BlockUi blocking={!game.isGuesserTurn || loading || gameFinished || game.isHost} message={loadingMessage}>
       <h5 className="pick-letter">Pick a letter:</h5>
       <div className="alphabet">
         {[...Array(26)].map((_, i) =>

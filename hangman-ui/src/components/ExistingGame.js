@@ -18,7 +18,7 @@ function ExistingGame() {
 
   return (
     <div className="game">
-      <WordToGuess length={game.length} word={game.word} />
+      <WordToGuess game={game} />
       <h5>{game.isGuesserTurn ? "It is a player's turn to select a letter" : "It is a turn for the host to verify latest guess"}</h5>
       <LetterSelect game={game} onSubmit={revalidateData} />
       {game.isHost && !game.isGuesserTurn 

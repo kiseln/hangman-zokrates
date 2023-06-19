@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom"
+import BlockUi from '@availity/block-ui';
 import prover from '../proof-generation';
 import gameWriter from '../blockchain/game-writer';
 
 
 function NewGame() {
   const [createGameProof, setCreateGameProof] = useState();
-  const [status, setStatus] = useState();
-  const [loading, setLoading] = useState();
+  const [[loading, loadingMessage], setLoading] = useState([false, ""]);
   const navigate = useNavigate();
 
   async function handleGenerateProof(e) {
@@ -19,38 +19,35 @@ function NewGame() {
     if (word.length < 3 || word.length > 16) return;
     
     const proof = await prover.generateCreateGameProof(word, async (status) => { 
-      setStatus(status);
-      setLoading(true);
+      setLoading([true, status]);
       // Otherwise the thread is blocked by proof computations and status never updates
       await new Promise(resolve => {
         setTimeout(resolve, 100);
       }) 
     });
     
-    setLoading(false);
+    setLoading([false, ""]);
     setCreateGameProof(proof);
   }
 
   async function handleSubmitProofToCreateGame(e) {
     e.preventDefault();
     
-    setLoading(true);    
+    setLoading([true, "Submitting transaction"]);
     const gameId = await gameWriter.createGame(createGameProof);    
-    setLoading(false);
+    setLoading([false, ""]);
 
     navigate(`game/${gameId}`);
   }
 
   return (
-    <div>
+    <BlockUi blocking={loading} message={loadingMessage}>
       <div className={`Fade ${loading ? "Fade-display" : ""}`}></div>
 
+      <h5>Choose a secret word (3-16 characters)</h5>
       {!createGameProof ?
       (<form className="Form" name="generate-proof" onSubmit={handleGenerateProof}>
-          <label className="Form-label">
-          Pick a word:
           <input className="Form-text" name="word" type="text" />
-          </label>
           <button className="Form-submit" type="submit">Generate proof</button>
       </form>) :
 
@@ -58,8 +55,7 @@ function NewGame() {
           <button className="Form-submit" type="submit">Create game (submit proof to the blockchain)</button>
       </form>)
       }
-      {status}
-    </div>
+    </BlockUi>
   );
 }
 
