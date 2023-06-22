@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Hangman Zokrates",
+  "name": "Hangmang game based on zero knowledge proofs",
   "icons": [
     {
       "src": "favicon.ico",
