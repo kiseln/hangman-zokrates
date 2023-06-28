@@ -7,14 +7,14 @@ import utils from '../utils';
 
 export default function VerifyGuess({ game, onProofSubmitted }) {
   const [proof, setProof] = useState();
-  const [loadingStatus, setStatus] = useState();
-  const [loading, setLoading] = useState();
+  const [[ loading, loadingMessage ], setLoading] = useState([false, ""]);
   const [error, setError] = useState();
   const latestGuess = game.attempts.slice(-1);
 
   async function handleGenerateProof(e) {
     e.preventDefault();
-    setStatus("");
+    setLoading([false, ""]);
+    setError("");
 
     const formData = new FormData(e.target);
     const word = formData.get("word");
@@ -27,33 +27,30 @@ export default function VerifyGuess({ game, onProofSubmitted }) {
       }
     }
 
-    const proof = await prover.generateLetterProof(word, latestGuess.toString(), async (status) => { 
-      setStatus(status);
-      setLoading(true);
+    const proof = await prover.generateLetterProof(word, latestGuess.toString(), async (status) => {
+      setLoading([true, status]);
       // Otherwise the thread is blocked by proof computations and status never updates
       await new Promise(resolve => {
         setTimeout(resolve, 100);
-      }) 
+      })
     });
-    
-    setLoading(false);
+
+    setLoading([false, ""]);
     setProof(proof);
   }
 
   async function handleSubmitProof(e) {
     e.preventDefault();
     
-    setLoading(true);
-    setStatus("Submitting transaction");
+    setLoading([true, "Submitting transaction"]);
     await gameWriter.verifyLetter(proof, game.id);
-    setLoading(false);
-    setStatus("");
+    setLoading([false, ""]);
 
     onProofSubmitted();
   }
 
   return(
-    <BlockUi className="verify-guess" blocking={loading} message={loadingStatus}>
+    <BlockUi className="verify-guess" blocking={loading} message={loadingMessage}>
       <h5>The current guess is <span>{String.fromCharCode(latestGuess)}</span></h5>
 
       {!proof ?
